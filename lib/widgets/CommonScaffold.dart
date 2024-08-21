@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:heathmate/screens/about.dart';
 import 'package:heathmate/screens/profile.dart';
+import 'package:heathmate/screens/settings.dart';
 
 class Commonscaffold extends StatefulWidget {
   final Widget body;
@@ -20,11 +21,10 @@ class _CommonscaffoldState extends State<Commonscaffold> {
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Container(
           decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.purple, Colors.deepPurple],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+          
+              color: Colors.deepPurple
+             
+            
           ),
           child: AppBar(
             title: const Text(
@@ -55,11 +55,10 @@ class _CommonscaffoldState extends State<Commonscaffold> {
           children: <Widget>[
             const DrawerHeader(
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.purple, Colors.deepPurple],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+               
+                  color: Colors.deepPurple
+                  
+                
               ),
               child: Text(
                 'Menu',
@@ -83,7 +82,8 @@ class _CommonscaffoldState extends State<Commonscaffold> {
               title: Text('Settings'),
               onTap: () {
                
-                Navigator.pop(context);
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>SettingsScreen()));
+                
               },
             ),
             ListTile(

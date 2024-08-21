@@ -1,7 +1,6 @@
 // @dart=2.17
 
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:heathmate/screens/diet.dart';
 import 'package:heathmate/screens/map_page.dart';
@@ -21,20 +20,22 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-    List<CalorieBurntData> calorieburnt = [];
+  List<CalorieBurntData> calorieburnt = [];
+  String username = "User"; // Default username
+  int stepsCount = 2133; // Default values for demonstration
+  double calorieBurn = 500.0;
+  double waterIntake = 2.5;
+  int sleepHours = 7;
 
   @override
   void initState() {
     super.initState();
     getCalorieBurnt();
+    _fetchUsername();
   }
-    @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    getCalorieBurnt();
-  }
-    Future<void> getCalorieBurnt() async {
-    final token = await AuthService().getToken(); 
+
+  Future<void> _fetchUsername() async {
+    final token = await AuthService().getToken();
 
     if (token == null) {
       print('User is not authenticated');
@@ -43,7 +44,36 @@ class _DashboardState extends State<Dashboard> {
 
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.242.67:4000/getroutes/getcalorieburnt'),
+        Uri.parse('http://yourapiurl.com/getusername'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body);
+        setState(() {
+          username = responseBody['username'];
+        });
+      } else {
+        print('Failed to fetch username: ${response.statusCode} ${response.body}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  Future<void> getCalorieBurnt() async {
+    final token = await AuthService().getToken();
+
+    if (token == null) {
+      print('User is not authenticated');
+      return;
+    }
+
+    try {
+      final response = await http.get(
+        Uri.parse('http://192.168.29.112:4000/getroutes/getcalorieburnt'),
         headers: {
           'Authorization': 'Bearer $token',
         },
@@ -72,142 +102,193 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Commonscaffold(
-      body: Column(
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
           children: <Widget>[
-           CalorieBurntScreen(calorieburnt: calorieburnt),
-            const SizedBox(height: 16.0),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [SizedBox(
-                        width:MediaQuery.of(context).size.width,
-                        child: _buildCard(title: "Gyms,Hospitals and Medical Stores", 
-                        description: "Find NearBy Gyms,Hospitals and Medical Stores", icon: Icons.map, color: Colors.deepPurpleAccent,
-                         onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const MapPage()));
-                         }),
-                      ),]
-                    ),
+            _buildWelcomeMessage(),
+            const SizedBox(height: 14.0),
+            CalorieBurntScreen(calorieburnt: calorieburnt),
+            const SizedBox(height: 18.0),
+          
+            
+            _buildFeatureCards(),
+          ],
+        ),
+      ),
+    );
+  }
 
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: _buildCard(
-                            title: "Water",
-                            description: "Amount of water",
-                            icon: Icons.water_rounded,
-                            color: Colors.deepPurple,
-                            onTap: (){
-                               Navigator.push(context,MaterialPageRoute(builder: (context)=>WaterGlass()));
-                              
-                             }
-                          ),
-                        ),
-                        Expanded(
-                          child: _buildCard(
-                            title: "Steps",
-                            description: "Steps :2133",
-                            icon: Icons.legend_toggle_sharp,
-                            color:Colors.purple.shade400,
-                            onTap: (){
-                              Navigator.push(context, MaterialPageRoute(builder: (context)=>Steps()));
-                            }
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: _buildCard(
-                            title: "Workout",
-                            description: "Workout plan",
-                            icon: Icons.man,
-                            color: const Color.fromARGB(255, 149, 125, 245),
-                           onTap: () async {
-                      // Navigate to the Workout page and wait for it to return
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Workout()),
-                      );
-                      // After returning, refresh the calorie data
-                      getCalorieBurnt();
-                    },
-                          ),
-                        ),
-                        Expanded(
-                          child: _buildCard(
-                            title: "Diet",
-                            description: "Today's Diet plan",
-                            icon: Icons.food_bank,
-                            color: Colors.deepPurple.shade300,
-                            onTap: (){
-                              Navigator.push(context, MaterialPageRoute(builder: (context)=>Diet()));
-                            }
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: _buildCard(
-                            title: "Sleep",
-                            description: "Hours Slept",
-                            icon: Icons.nightlight_round,
-                            color: const Color.fromARGB(255, 234, 172, 141),
-                            onTap: (){
-                               Navigator.push(context, MaterialPageRoute(builder: (context)=>SleepPage()));
-                         
-                                }
-                          ),
-                        ),
-                        Expanded(
-                          child: _buildCard(
-                            title: "Heart Rate",
-                            description: "Heart Rate",
-                            icon: Icons.favorite_border,
-                            color: const Color.fromARGB(255, 244, 105, 140),
-                            onTap: (){
-                                 }
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+ Widget _buildWelcomeMessage() {
+  return Container(
+    margin: const EdgeInsets.all(20.0),
+    padding: const EdgeInsets.all(16.0),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(color: Colors.deepPurple),
+      
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          'Hello, $username',
+          style: TextStyle(
+            fontSize: 26.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.deepPurple,
+          ),
+        ),
+        const SizedBox(height: 8.0),
+        Text(
+          'Keep pushing forward! 💪',
+          style: TextStyle(
+            fontSize: 18.0,
+            fontWeight: FontWeight.w500,
+            color: Colors.deepPurple,
+          ),
+        ),
+        const SizedBox(height: 12.0),
+        Text(
+          '"Success is not final, failure is not fatal: It is the courage to continue that counts."',
+          style: TextStyle(
+            fontSize: 16.0,
+            fontStyle: FontStyle.italic,
+            color: Colors.deepPurple,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+ 
+  Widget _buildFeatureCards() {
+    return Column(
+      children: <Widget>[
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              
+            child: _buildCard(
+                title: "Map",
+                description: "Find Nearby Gyms, Hospitals and Medical Stores",
+                icon: Icons.map,
+               // color: Colors.deepPurpleAccent,
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const MapPage()));
+                },
+              ),
+            ),
+             Expanded(
+              child: _buildCard(
+                title: "Water",
+                description: "Water Intake: $waterIntake L",
+                icon: Icons.water_rounded,
+               // color: Colors.deepPurple,
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => WaterGlass()));
+                },
+              ),
+            ),
+          
+          ],
+        ),
+        Row(
+          children: <Widget>[
+             Expanded(
+              child: _buildCard(
+                title: "Steps",
+                description: "Steps Count: $stepsCount",
+                icon: Icons.legend_toggle_sharp,
+               // color: Colors.purple.shade400,
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => Steps()));
+                },
+              ),
+            ),
+              Expanded(
+              child: _buildCard(
+                title: "Workout",
+                description: "Calories Burnt",
+                icon: Icons.man,
+              //  color: const Color.fromARGB(255, 149, 125, 245),
+                onTap: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Workout()),
+                  );
+                  getCalorieBurnt();
+                },
+              ),
+            ),
+          
+          ],
+        ),
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: _buildCard(
+                title: "Diet",
+                description: "Calories Consumed",
+                icon: Icons.food_bank,
+              //  color: Colors.deepPurple.shade300,
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => Diet()));
+                },
+              ),
+            ),
+              Expanded(
+              child: _buildCard(
+                title: "Sleep",
+                description: "Sleep Stats",
+                icon: Icons.nightlight_round,
+              //  color: const Color.fromARGB(255, 234, 172, 141),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => SleepPage()));
+                },
               ),
             ),
           ],
         ),
-      
+    
+      ],
     );
   }
-
-  Widget _buildCard({
-    required String title,
-    required String description,
-    required IconData icon,
-    required Color color,
-    required Function() onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.all(4.0),
-        child: SizedBox(
-          height: 150,
-          width:100,
-         
-          child: Card(
-            
-            shape: RoundedRectangleBorder(
+Widget _buildCard({
+  required String title,
+  required String description,
+  required IconData icon,
+  required Function() onTap,
+}) {
+  return InkWell(
+    onTap: onTap,
+    child: Padding(
+      padding: const EdgeInsets.all(7.0),
+      child: SizedBox(
+        height: 150,
+        width: 100,
+        child: Card(
+      
+          elevation: 5,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+            side: BorderSide(
+              color: Colors.deepPurple, // Set border color
+              width: 2.0, // Border width
+            ),
+          ),
+          margin: EdgeInsets.zero,
+          child: Container(
+            decoration: BoxDecoration(
+              
+                color: Colors.deepPurple,
+              
+              
               borderRadius: BorderRadius.circular(15),
             ),
-            color: color,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
@@ -238,6 +319,9 @@ class _DashboardState extends State<Dashboard> {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
+
 }

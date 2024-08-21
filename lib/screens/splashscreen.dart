@@ -6,7 +6,7 @@ import 'package:heathmate/screens/dashboard.dart';
 import 'package:heathmate/screens/onBoardingScreen1.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Splashscreen extends StatefulWidget{
+class Splashscreen extends StatefulWidget {
   const Splashscreen({super.key});
 
   @override
@@ -14,7 +14,7 @@ class Splashscreen extends StatefulWidget{
 }
 
 class _SplashscreenState extends State<Splashscreen> {
-   @override
+  @override
   void initState() {
     super.initState();
     _checkLoginStatus();
@@ -40,14 +40,26 @@ class _SplashscreenState extends State<Splashscreen> {
       );
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
-      body: Center(
-        child: Container(
+      body: Container(
+        decoration: BoxDecoration(
           
-          child: Text("HealthMate",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 30,color: Colors.purple),),
+            color:Colors.deepPurple,
+           
+          
+        ),
+        child: Center(
+          child: Text(
+            "HealthMate",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 30,
+              color: Colors.white,
+            ),
+          ),
         ),
       ),
     );

@@ -34,7 +34,7 @@ Future<void> _fetchSleepData() async {
 
     try {
         final response = await http.get(
-            Uri.parse('http://192.168.242.67:4000/getroutes/getsleepdata'),
+            Uri.parse('http://192.168.29.112:4000/getroutes/getsleepdata'),
             headers: {
                 'Authorization': 'Bearer $token',
             },
@@ -72,7 +72,7 @@ Future<void> _fetchSleepData() async {
 
     try {
         final response = await http.post(
-            Uri.parse('http://192.168.242.67:4000/postroutes/savesleepdata'),
+            Uri.parse('http://192.168.29.112:4000/postroutes/savesleepdata'),
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer $token',
@@ -111,7 +111,8 @@ Future<void> _fetchSleepData() async {
   Widget build(BuildContext context) {
     double percentage = _calculatePercentage();
 
-    return Commonscaffold(body:   
+    return Commonscaffold(
+      body:   
          SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: Padding(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:heathmate/widgets/CommonScaffold.dart';
 import 'package:location/location.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -54,8 +55,8 @@ class _MapPageState extends State<MapPage> {
   }
 
   Future<void> _getNearbyPlaces() async {
-    final String apiKey = 'Api_key';
-    final String baseUrl = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json';
+    const String apiKey = 'AIzaSyA_wcQvnJPYXP9aLAD-JO4eOfyCbnabF7o';
+    const String baseUrl = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json';
     final String location = '${_currentPosition!.latitude},${_currentPosition!.longitude}';
     final int radius = 1500; 
 
@@ -103,10 +104,8 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Map Page"),
-      ),
+    return Commonscaffold(
+      
       body: Stack(
         children: [
           _currentPosition == null

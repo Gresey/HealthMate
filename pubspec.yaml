@@ -80,8 +80,13 @@ flutter:
     - assets/steps.png
     - assets/water.png
     - assets/sleep.png
+    - assets/diet.jpg
+    - assets/steps.jpg
+    - assets/glass.jpg
+    - assets/sleep.jpg
     - assets/heartrate.png
-    - assets/workout.png
+    - assets/workoutimage.jpg
+   
     - assets/food_data.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
