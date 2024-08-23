@@ -18,7 +18,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       'description': 'Track your water intake to ensure proper hydration.',
       'image': 'assets/glass.jpg',
     },
-     {
+    {
       'title': 'Monitor Your Steps',
       'description': 'Count your steps and stay active throughout the day.',
       'image': 'assets/steps.jpg',
@@ -28,8 +28,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       'description': 'Keep track of your daily food intake to maintain a balanced diet.',
       'image': 'assets/diet.png',
     },
-   
-    
     {
       'title': 'Improve Your Sleep',
       'description': 'Monitor your sleep patterns and improve your sleep quality.',
@@ -57,6 +55,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     child: Image.asset(
                       _pages[index]['image']!,
                       fit: BoxFit.cover,
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      height: 220,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black.withOpacity(0.9),
+                            Colors.black,
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                   Positioned(

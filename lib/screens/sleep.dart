@@ -34,7 +34,7 @@ Future<void> _fetchSleepData() async {
 
     try {
         final response = await http.get(
-            Uri.parse('http://192.168.29.112:4000/getroutes/getsleepdata'),
+            Uri.parse('http://localhost:4000/getroutes/getsleepdata'),
             headers: {
                 'Authorization': 'Bearer $token',
             },
@@ -72,7 +72,7 @@ Future<void> _fetchSleepData() async {
 
     try {
         final response = await http.post(
-            Uri.parse('http://192.168.29.112:4000/postroutes/savesleepdata'),
+            Uri.parse('http://localhost:4000/postroutes/savesleepdata'),
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer $token',
@@ -112,6 +112,7 @@ Future<void> _fetchSleepData() async {
     double percentage = _calculatePercentage();
 
     return Commonscaffold(
+      title: "Sleep Stats",
       body:   
          SingleChildScrollView(
               scrollDirection: Axis.vertical,
@@ -151,6 +152,11 @@ Future<void> _fetchSleepData() async {
                     ),
                     SizedBox(height: 10),
                     ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepPurple,
+                        foregroundColor: Colors.white
+                     
+                    ),
                       onPressed: _updateSleepData,
                       child: Text('Submit'),
                     ),

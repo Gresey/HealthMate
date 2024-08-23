@@ -23,17 +23,17 @@ class _WaterGlassState extends State<WaterGlass> {
   final double _maxCapacity = 8.0;
   final TextEditingController _controller = TextEditingController();
   String _selectedInterval = "1 hour";
-  final String baseUrl = 'http://192.168.29.112:4000';
+  final String baseUrl = 'http://localhost:4000';
 
   void initializeTimezone() {
-  tz.initializeTimeZones();
-}
+    tz.initializeTimeZones();
+  }
 
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
-}
+  }
 
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -41,9 +41,7 @@ class _WaterGlassState extends State<WaterGlass> {
   @override
   void initState() {
     super.initState();
-      
     getWaterConsumed();
-    
     _initializeNotifications();
   }
 
@@ -57,31 +55,33 @@ class _WaterGlassState extends State<WaterGlass> {
 
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
-void _scheduleNotification(int intervalInHours) async {
-  initializeTimezone();
 
-  final now = tz.TZDateTime.now(tz.local);
-  final notificationTime = now.add(Duration(hours: intervalInHours));
+  void _scheduleNotification(int intervalInHours) async {
+    initializeTimezone();
 
-  await flutterLocalNotificationsPlugin.zonedSchedule(
-    0,
-    'Drink Water',
-    'It\'s time to drink water!',
-    notificationTime,
-    const NotificationDetails(
-      android: AndroidNotificationDetails(
-        'drink_water_channel',
-        'Drink Water Notifications',
-        channelDescription: 'Reminder to drink water',
-        importance: Importance.max,
-        priority: Priority.high,
+    final now = tz.TZDateTime.now(tz.local);
+    final notificationTime = now.add(Duration(hours: intervalInHours));
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      0,
+      'Drink Water',
+      'It\'s time to drink water!',
+      notificationTime,
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'drink_water_channel',
+          'Drink Water Notifications',
+          channelDescription: 'Reminder to drink water',
+          importance: Importance.max,
+          priority: Priority.high,
+        ),
       ),
-    ),
-   
-    uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime, androidAllowWhileIdle: false,
-  );
-}
-  
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      androidAllowWhileIdle: false,
+    );
+  }
+
   void _showReminderSetDialog() {
     showDialog(
       context: context,
@@ -101,6 +101,7 @@ void _scheduleNotification(int intervalInHours) async {
       },
     );
   }
+
   void _onSetReminder() {
     int intervalInHours;
 
@@ -121,15 +122,15 @@ void _scheduleNotification(int intervalInHours) async {
         intervalInHours = 1;
     }
 
-      try {
-    _scheduleNotification(intervalInHours);
-    _showReminderSetDialog(); 
-  } catch (e) {
-    print("Error scheduling notification: $e");
-    // You can also show an error dialog if needed
+    try {
+      _scheduleNotification(intervalInHours);
+      _showReminderSetDialog();
+    } catch (e) {
+      print("Error scheduling notification: $e");
+      // You can also show an error dialog if needed
+    }
   }
-  }
-  
+
   void _updateWaterAmount() {
     final newWaterAmount = double.tryParse(_controller.text) ?? 0.0;
 
@@ -210,9 +211,10 @@ void _scheduleNotification(int intervalInHours) async {
 
   @override
   Widget build(BuildContext context) {
-    double fillHeight = (_waterAmount / _maxCapacity) * 250;
+    double fillHeight = (_waterAmount / _maxCapacity) * 200; // Adjusted height
 
     return Commonscaffold(
+      title:"Water Intake",
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -223,7 +225,7 @@ void _scheduleNotification(int intervalInHours) async {
               style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  fontStyle: FontStyle.italic),
+                  ),
             ),
             const SizedBox(height: 20),
             Row(
@@ -266,8 +268,8 @@ void _scheduleNotification(int intervalInHours) async {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  width: 150,
-                  height: 250,
+                  width: 100, // Adjusted width
+                  height: 200, // Adjusted height
                   decoration: const BoxDecoration(
                     border: Border(
                       left: BorderSide(color: Colors.blueAccent, width: 4),
@@ -284,11 +286,11 @@ void _scheduleNotification(int intervalInHours) async {
                       AnimatedContainer(
                         duration: const Duration(seconds: 1),
                         curve: Curves.easeInOut,
-                        width: 150,
+                        width: 100, // Adjusted width
                         height: fillHeight,
-                        decoration: const BoxDecoration(
-                          color: Colors.blue,
-                          borderRadius: BorderRadius.vertical(
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withOpacity(0.5), // Added opacity
+                          borderRadius: const BorderRadius.vertical(
                               bottom: Radius.circular(15)),
                         ),
                       ),
@@ -297,7 +299,7 @@ void _scheduleNotification(int intervalInHours) async {
                 ),
                 const SizedBox(width: 3),
                 CustomPaint(
-                  size: const Size(20, 250),
+                  size: const Size(20, 200), // Adjusted height
                   painter: ScalePainter(_maxCapacity),
                 ),
               ],
@@ -350,8 +352,7 @@ class ScalePainter extends CustomPainter {
       double y = size.height - (i / maxCapacity) * size.height;
       canvas.drawLine(Offset(0, y), Offset(size.width / 2, y), paint);
       TextSpan span = TextSpan(
-          style: const TextStyle(color: Colors.grey),
-          text: '$i');
+          style: const TextStyle(color: Colors.grey), text: '$i');
       TextPainter tp = TextPainter(
           text: span,
           textAlign: TextAlign.left,

@@ -1,4 +1,3 @@
-// @dart=2.17
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -62,12 +61,12 @@ class _DietState extends State<Diet> {
 
   Future<void> postMeal(String mealName, double quantity) async {
      final authService = AuthService();
-  final token = await authService.getToken(); // Retrieve the token
+     final token = await authService.getToken(); // Retrieve the token
 
-  if (token == null) {
-    print('User is not authenticated');
-    return;
-  }
+     if (token == null) {
+       print('User is not authenticated');
+       return;
+     }
     try {
       final nutritionData = await fetchNutritionData(mealName);
 
@@ -75,14 +74,13 @@ class _DietState extends State<Diet> {
         final caloriesPer100g = nutritionData['calories'] as double;
         final calorieconsumed = (caloriesPer100g * quantity) / 100;
 
-        final uri = Uri.parse("http://192.168.29.112:4000/postroutes/savemeal",
-        );
+        final uri = Uri.parse("http://localhost:4000/postroutes/savemeal");
         final response = await http.post(
           uri,
           headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
           body: jsonEncode({
             'mealName': mealName,
             'quantity': quantity,
@@ -109,15 +107,15 @@ class _DietState extends State<Diet> {
   }
 
   Future<void> getMealCardDetails() async {
-      final authService = AuthService();
-  final token = await authService.getToken(); 
+    final authService = AuthService();
+    final token = await authService.getToken(); 
 
-  if (token == null) {
-    print('User is not authenticated');
-    return;
-  }
+    if (token == null) {
+      print('User is not authenticated');
+      return;
+    }
     try {
-      final uri = Uri.parse('http://192.168.29.112:4000/getroutes/getmealdata');
+      final uri = Uri.parse('http://localhost:4000/getroutes/getmealdata');
       final response = await http.get(uri,
        headers: {
         'Authorization': 'Bearer $token',
@@ -131,7 +129,6 @@ class _DietState extends State<Diet> {
             json['NameofFood'] as String,
             (json['quantity'] as num).toDouble(),
             (json['calorieconsumed'] as num).toDouble(),
-            
           );
         }).toList();
 
@@ -155,6 +152,7 @@ class _DietState extends State<Diet> {
   @override
   Widget build(BuildContext context) {
     return Commonscaffold(
+      title:"Diet",
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -164,7 +162,7 @@ class _DietState extends State<Diet> {
               child: Column(
                 children: [
                   Text(
-                    "Daily Intake",
+                    "Daily Calorie Intake",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                   ),
                   SizedBox(height: 10),
@@ -190,24 +188,19 @@ class _DietState extends State<Diet> {
                     padding: const EdgeInsets.only(bottom: 3.0),
                     child: Card(
                       color: Colors.deepPurple,
-                      elevation: 5.0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10), // Rounded corners
+                      ),
+                      elevation: 0, // Remove shadow
                       child: ListTile(
-                        title: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              meal.mealconsumed,
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            Text(
-                              '${meal.quantity}g',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            Text(
-                              '${meal.calorieburnt} cal',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ],
+                        contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                        title: Text(
+                          meal.mealconsumed,
+                          style: TextStyle(color: Colors.white, fontSize: 16.0),
+                        ),
+                        subtitle: Text(
+                          'Quantity: ${meal.quantity}g | Calories: ${meal.calorieburnt} cal',
+                          style: TextStyle(color: Colors.white, fontSize: 14.0),
                         ),
                       ),
                     ),
@@ -217,6 +210,10 @@ class _DietState extends State<Diet> {
             ),
             SizedBox(height: 20),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                foregroundColor: Colors.white,
+              ),
               onPressed: () {
                 showDialog(
                   context: context,

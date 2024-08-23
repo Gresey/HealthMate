@@ -15,7 +15,7 @@ class Dietchart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double percentConsumed = caloriesConsumed / maxCalories;
-    Color progressColor = percentConsumed > 1.0 ? Colors.red : Colors.purple.withOpacity(0.6); // Change color if exceeded
+    Color progressColor = percentConsumed > 1.0 ? Colors.red : Colors.deepPurple.withOpacity(0.6); // Change color if exceeded
 
     return Column(
       children: <Widget>[
@@ -27,7 +27,7 @@ class Dietchart extends StatelessWidget {
                 width: MediaQuery.of(context).size.width - 50,
                 height: 40.0, // Increased height
                 decoration: BoxDecoration(
-                  color: Colors.purpleAccent.withOpacity(0.2),
+                  color: Colors.deepPurpleAccent.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(20.0), // Rounded corners
                 ),
                 child: FractionallySizedBox(

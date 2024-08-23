@@ -6,8 +6,9 @@ import 'package:heathmate/screens/settings.dart';
 
 class Commonscaffold extends StatefulWidget {
   final Widget body;
+  final String title;
 
-  const Commonscaffold({super.key, required this.body});
+  const Commonscaffold({super.key, required this.body, required this.title});
 
   @override
   State<Commonscaffold> createState() => _CommonscaffoldState();
@@ -27,8 +28,8 @@ class _CommonscaffoldState extends State<Commonscaffold> {
             
           ),
           child: AppBar(
-            title: const Text(
-              "HealthMate",
+           title: Text(
+              widget.title,
               style: TextStyle(color: Colors.white),
             ),
             backgroundColor: Colors.transparent,
