@@ -2,6 +2,8 @@ import UserData from '../models/userData.js';
 import Workout from '../models/workoutmodel.js';
 import Meal from '../models/mealmodel.js';
 import usermodel from '../models/user.js';
+import User from '../models/user.js';
+
 
 
 
@@ -135,11 +137,6 @@ export const WorkDetailscontroller = async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    const userWeight = user.weight;
-    if (!userWeight || isNaN(userWeight)) {
-      return res.status(400).json({ error: 'User weight is invalid or not provided' });
-    }
-
     const currentDay = new Date().toLocaleString('en-US', { weekday: 'long' });
     const userData = await UserData.findOne({ userId: userId });
 
@@ -155,10 +152,7 @@ export const WorkDetailscontroller = async (req, res) => {
     await userData.save();
 
     for (const workout of workouts) {
-      const { title, time, MET } = workout;
-
-      const timeInHours = time / 3600;
-      const calorieburnt = MET * userWeight * timeInHours;
+      const { title, time, calorieburnt } = workout;
 
       const existingWorkout = await Workout.findOne({
         userId,
@@ -174,7 +168,7 @@ export const WorkDetailscontroller = async (req, res) => {
           userId: userId,
           NameofWorkout: title,
           timeofworkout: time,
-          calorieburnt: Math.round(calorieburnt),
+          calorieburnt:calorieburnt,
         });
         await newWorkout.save();
       }
@@ -189,16 +183,23 @@ export const WorkDetailscontroller = async (req, res) => {
 };
 
 
+
 export const savemealcontroller = async (req, res) => {
     const Uid = req.user.userId;
     const { mealName, quantity, calorieconsumed,totalcaloriesconsumed } = req.body;
-   
-  
+    const currentDay = new Date().toLocaleString('en-US', { weekday: 'long' });
+    const user=await UserData.findOne({userId:Uid});
+    if (!user) {
+      return res.status(404).send("User not found");
+  }
+    user.calorieConsumed[currentDay]=totalcaloriesconsumed.toFixed(2);
+   await user.save();
     if (!mealName || quantity == null || calorieconsumed == null) {
       return res.status(400).send("Missing required fields");
     }
-  
+    
     try {
+      
       const mealData = new Meal({
         userId: Uid,
         date: new Date(),

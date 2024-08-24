@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:heathmate/screens/dashboard.dart';
 import 'package:heathmate/screens/forget_password.dart';
 import 'package:heathmate/screens/signup.dart';
-
 import 'package:heathmate/services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -30,10 +29,10 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-
-   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false, // Prevent resizing of Scaffold when keyboard appears
       body: Stack(
         children: [
           Positioned(
@@ -97,11 +96,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.white, // Ensure the card color is white
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(15.0),
                       ),
                       padding: const EdgeInsets.all(20.0),
                       child: Column(
+                        mainAxisSize: MainAxisSize.min, // Adjusts the height of the column
                         children: [
                           Text(
                             'Login',
@@ -141,22 +141,21 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           SizedBox(height: 20),
-                        ElevatedButton(
-  onPressed: () {
-    _login();
-  },
-  child: Text('Login'),
-  style: ElevatedButton.styleFrom(
-    foregroundColor: Colors.white, backgroundColor: Colors.deepPurple, // Text color
-    minimumSize: Size(double.infinity, 40), // Width and height
-    padding: EdgeInsets.symmetric(horizontal: 16.0), // Horizontal padding
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(12), // Rounded corners
-    ),
-  ),
-),
-                          // ElevatedButton(onPressed: () {
-                        
+                          ElevatedButton(
+                            onPressed: () {
+                              _login();
+                            },
+                            child: Text('Login'),
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.deepPurple,
+                              minimumSize: Size(double.infinity, 40),
+                              padding: EdgeInsets.symmetric(horizontal: 16.0),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          ),
                           SizedBox(height: 10),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,

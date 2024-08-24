@@ -27,7 +27,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
 
     try {
       final userDetailsResponse = await http.get(
-        Uri.parse('http://localhost:4000/getroutes/getuserdetails'),
+        Uri.parse('http://192.168.133.236:4000/getroutes/getuserdetails'),
         headers: {
           'Authorization': 'Bearer $token',
         },
@@ -45,7 +45,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
 
         // Fetch calorie burnt data
         final calorieBurntResponse = await http.get(
-          Uri.parse('http://localhost:4000/getroutes/getcalorieburnt'),
+          Uri.parse('http://192.168.133.236:4000/getroutes/getcalorieburnt'),
           headers: {
             'Authorization': 'Bearer $token',
           },

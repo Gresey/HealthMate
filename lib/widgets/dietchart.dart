@@ -51,10 +51,32 @@ class Dietchart extends StatelessWidget {
           ),
         ),
         SizedBox(height: 10),
-        Text(
-          "Calories Consumed Today: ${caloriesConsumed.toStringAsFixed(1)} cal",
-          style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+        SizedBox( height: 60,
+            child: Card(
+              color: Colors.white,
+              elevation: 0, // Remove shadow
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                  Text(
+              "Calories Consumed Today", style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
+                 ),
+                  
+                  Text(
+                    "${caloriesConsumed.toStringAsFixed(1)} cal",
+                    style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
+
+        
       ],
     );
   }

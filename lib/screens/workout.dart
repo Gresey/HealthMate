@@ -1,15 +1,10 @@
 // @dart=2.17
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
-
 import 'package:heathmate/services/auth_service.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:heathmate/widgets/CommonScaffold.dart';
-
-import '../bloc/workout/workout_bloc.dart';
 
 class Workout extends StatefulWidget {
   const Workout({super.key});
@@ -19,17 +14,16 @@ class Workout extends StatefulWidget {
 }
 
 class _WorkoutPageState extends State<Workout> {
- final TextEditingController _workoutController = TextEditingController();
+  final TextEditingController _workoutController = TextEditingController();
   String _workoutTitle = "Workout";
+  List<Map<String, Object>> workoutActivities = [];
   Timer? _timer;
   int _seconds = 0;
   bool _isRunning = false;
-  bool _isPaused = false;
   String? _selectedExercise;
   double _selectedExerciseMET = 0.0;
   double _weight = 50.0;
-  double totalCalories = 0.0;
-  late WorkoutBloc workoutBloc;
+  double totalcalories = 0.0;
 
   final List<Map<String, Object>> exercises = [
     {"name": "Bench Press", "value": 6.0},
@@ -84,43 +78,106 @@ class _WorkoutPageState extends State<Workout> {
     {"name": "Pilates", "value": 3.0},
   ];
 
+  // Future<void> addWorkoutDetails(List<Map<String, Object>> list) async {
+  //   final authService = AuthService();
+  //   final token = await authService.getToken();
 
+  //   if (token == null) {
+  //     print('User is not authenticated');
+  //     return;
+  //   }
 
-  @override
-  void initState() {
-    super.initState();
+  //   try {
+  //     final uniqueActivities = <String, Map<String, Object>>{};
+  //     for (var activity in list) {
+  //       final key = '${activity['title']}-${activity['time']}';
+  //       uniqueActivities[key] = activity;
+  //     }
 
-    // Initialize the WorkoutBloc
-    workoutBloc = WorkoutBloc();
+  //     // Convert the unique map values to a list for JSON encoding
+  //     final jsondata = jsonEncode({
+  //       'activities': uniqueActivities.values.toList(),
+  //       'totalCalories': totalcalories.toStringAsFixed(0),
+  //     });
 
-    // Fetch initial workout details
-    workoutBloc.add(FetchWorkoutDetailsEvent());
+  //     final uri = Uri.parse(
+  //         "http://192.168.242.67:4000/postroutes/saveworkoutdetails");
+  //     final response = await http.post(
+  //       uri,
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': 'Bearer $token',
+  //       },
+  //       body: jsondata,
+  //     );
 
-    // Add listener for when the WorkoutBloc's state changes
-    workoutBloc.stream.listen((state) {
-      if (state is FetchWorkoutDetailsState) {
-        // Check if the workout activities have been updated
-        final activities = state.fetchedActivities;
-        if (activities.isNotEmpty) {
-          setState(() {
-            totalCalories = state.totalCalories;
-          });
-        }
-      }
-    });
+  //     if (response.statusCode == 200) {
+  //       print("Workout Data saved successfully");
+  //       print('Response: ${response.body}');
+  //     } else {
+  //       print(
+  //           'Failed to send Workout data. Status code: ${response.statusCode}');
+  //       print('Response body: ${response.body}');
+  //     }
+  //   } catch (e) {
+  //     print('Error: $e');
+  //   }
+  // }
+
+  Future<void> fetchWorkoutDetails() async {
+    final authService = AuthService();
+  final token = await authService.getToken(); 
+
+  if (token == null) {
+    print('User is not authenticated');
+    return;
   }
+    try {
+      final uri =
+          Uri.parse('http://192.168.133.236:4000/getroutes/getworkoutdetails');
+      final response = await http.get(uri,
+       headers: {
+        'Authorization': 'Bearer $token',
+      },);
 
-  @override
-  void dispose() {
-    _timer?.cancel();
-    workoutBloc.close(); // Close the bloc when disposing
-    super.dispose();
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        final List<Map<String, Object>> fetchedActivities = data.map((json) {
+          return {
+            'title': json['NameofWorkout'] as String? ?? 'Unknown',
+            'time': (json['timeofworkout'] as num?)?.toInt() ?? 0,
+            'calorieburnt': (json['calorieburnt'] as num?)?.toDouble() ?? 0.0,
+            'MET': (json['MET'] as num?)?.toDouble() ?? 0.0,
+          };
+        }).toList();
+
+        setState(() {
+          workoutActivities = fetchedActivities;
+          totalcalories = workoutActivities.fold(
+            0.0,
+            (sum, activity) => sum + (activity['calorieburnt'] as double),
+          );
+        });
+      } else if (response.statusCode == 404) {
+        // Handle 404 status code
+        setState(() {
+          workoutActivities = [];
+          totalcalories = 0.0;
+        });
+        print('No workout data found for today. List cleared.');
+      } else {
+        print(
+            'Failed to fetch Workout data. Status code: ${response.statusCode}');
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 
   void _startTimer() {
     setState(() {
       _isRunning = true;
-      _isPaused = false;
     });
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
@@ -128,185 +185,254 @@ class _WorkoutPageState extends State<Workout> {
       });
     });
   }
+ void _stopTimer() {
+  _timer?.cancel();
+  setState(() {
+    if (_seconds != 0) {
+      final calorieburnt = calculateCaloriesBurnt(_seconds, _selectedExerciseMET);
+      final newActivity = {
+        'title': _workoutTitle,
+        'time': _seconds,
+        'MET': _selectedExerciseMET ?? 0,
+        'calorieburnt': calorieburnt,
+      };
+
+      // Check if the workout title already exists in the list
+      final existingIndex = workoutActivities.indexWhere(
+        (activity) => activity['title'] == _workoutTitle,
+      );
+
+      if (existingIndex >= 0) {
+        // Update existing entry
+        workoutActivities[existingIndex] = newActivity;
+      } else {
+        // Add new entry
+        workoutActivities.add(newActivity);
+      }
+
+      totalcalories = workoutActivities.fold(
+        0.0,
+        (sum, activity) => sum + (activity['calorieburnt'] as double),
+      );
+
+      // Send updated list to the server
+      addWorkoutDetails(workoutActivities);
+    }
+    _isRunning = false;
+    _seconds = 0;
+  });
+}
+
+Future<void> addWorkoutDetails(List<Map<String, Object>> list) async {
+  final authService = AuthService();
+  final token = await authService.getToken();
+
+  if (token == null) {
+    print('User is not authenticated');
+    return;
+  }
+
+  try {
+    // Convert the unique map values to a list for JSON encoding
+    final jsondata = jsonEncode({
+      'activities': list,
+      'totalCalories': totalcalories.toStringAsFixed(0),
+    });
+
+    final uri = Uri.parse("http://192.168.133.236:4000/postroutes/saveworkoutdetails");
+    final response = await http.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsondata,
+    );
+
+    if (response.statusCode == 200) {
+      print("Workout Data saved successfully");
+      print('Response: ${response.body}');
+    } else {
+      print('Failed to send Workout data. Status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+  } catch (e) {
+    print('Error: $e');
+  }
+}
+
 
   void _pauseTimer() {
     _timer?.cancel();
     setState(() {
-      _isPaused = true;
       _isRunning = false;
     });
-  }
-
-  void _resumeTimer() {
-    _startTimer();
-  }
-
-  void _stopTimer() {
-    _timer?.cancel();
-    setState(() {
-      if (_seconds != 0) {
-        final calorieburnt = calculateCaloriesBurnt(_seconds, _selectedExerciseMET);
-        final newActivity = {
-          'title': _workoutTitle,
-          'time': _seconds,
-          'MET': _selectedExerciseMET,
-          'calorieburnt': calorieburnt,
-        };
-
-        final updatedActivities = List<Map<String, Object>>.from(
-            (workoutBloc.state as FetchWorkoutDetailsState).fetchedActivities);
-
-        final existingIndex = updatedActivities.indexWhere(
-          (activity) => activity['title'] == _workoutTitle,
-        );
-
-        if (existingIndex >= 0) {
-          updatedActivities[existingIndex] = newActivity;
-        } else {
-          updatedActivities.add(newActivity);
-        }
-
-        totalCalories = updatedActivities.fold(
-          0.0,
-          (sum, activity) => sum + (activity['calorieburnt'] as double),
-        );
-
-        workoutBloc.add(SaveWorkoutDetailsEvent(updatedActivities, totalCalories));
-      }
-      _seconds = 0;
-      _isRunning = false;
-      _isPaused = false;
-    });
-  }
-
-  double calculateCaloriesBurnt(int seconds, double metValue) {
-    final hours = seconds / 3600;
-    return metValue * _weight * hours;
   }
 
   String _formatTime(int seconds) {
-    final hours = (seconds ~/ 3600).toString().padLeft(2, '0');
-    final minutes = ((seconds % 3600) ~/ 60).toString().padLeft(2, '0');
-    final secs = (seconds % 60).toString().padLeft(2, '0');
-    return '$hours:$minutes:$secs';
+    int hours = seconds ~/ 3600;
+    int minutes = (seconds % 3600) ~/ 60;
+    int secs = seconds % 60;
+    return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
+  }
+
+  double calculateCaloriesBurnt(int seconds, double selectedExerciseMET) {
+    if (selectedExerciseMET <= 0 || _weight <= 0) {
+      return 0.0;
+    }
+
+    final timeInHours = seconds / 3600;
+    final caloriesBurnt = selectedExerciseMET * _weight * timeInHours;
+
+    if (caloriesBurnt.isNaN || caloriesBurnt < 0) {
+      return 0.0;
+    }
+
+    return caloriesBurnt;
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Commonscaffold(
-      title: "Workout",
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            const SizedBox(height: 20.0),
-            DropdownButtonFormField<String>(
-              value: _selectedExercise,
-              onChanged: (String? newValue) {
-                setState(() {
-                  _selectedExercise = newValue;
-                  final selectedExerciseMap = exercises
-                      .firstWhere((exercise) => exercise['name'] == newValue);
-                  _selectedExerciseMET = selectedExerciseMap['value'] as double;
-                  _workoutTitle = newValue ?? 'Workout';
-                });
-              },
-              items: exercises.map<DropdownMenuItem<String>>((exercise) {
-                return DropdownMenuItem<String>(
-                  value: exercise['name'] as String?,
-                  child: Text(exercise['name'] as String),
-                );
-              }).toList(),
-              decoration: InputDecoration(
-                fillColor: Colors.white,
-                labelText: 'Select Exercise',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            Text(
-              'Timer: ${_formatTime(_seconds)}',
-              style: const TextStyle(fontSize: 18.0), // Increase the font size
-            ),
-            const SizedBox(height: 16.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: _isRunning || _isPaused ? _stopTimer : _startTimer,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,foregroundColor: Colors.white
-                  ),
-                  child: Text(_isRunning ? 'Stop' : 'Start'),
-                ),
-                if (_isRunning || _isPaused)
-                  ElevatedButton(
-                    onPressed: _isRunning ? _pauseTimer : _resumeTimer,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.deepPurple,foregroundColor: Colors.white
-                    ),
-                    child: Text(_isPaused ? 'Resume' : 'Pause'),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 20.0),
-            if (totalCalories > 0)
-              Text(
-                'Total Calories Burned: ${totalCalories.toStringAsFixed(2)} kcal',
-                style: const TextStyle(fontSize: 18.0, color: Colors.black87),
-              ),
-            const SizedBox(height: 20.0),
-            BlocConsumer<WorkoutBloc, WorkoutState>(
-              bloc: workoutBloc,
-              builder: (context, state) {
-                if (state is WorkoutInitial) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (state is FetchWorkoutDetailsState) {
-                  return Expanded(
-                    child: ListView.builder(
-                      itemCount: state.fetchedActivities.length,
-                      itemBuilder: (context, index) {
-                        final activity = state.fetchedActivities[index];
-                        return Card(
-                          color: Colors.deepPurple,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          elevation: 0, // Remove shadow
-                          child: ListTile(
-                            title: Text(
-                              activity['title'] as String,
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                            subtitle: Text(
-                              'Time: ${_formatTime(activity['time'] as int)} | Calories: ${(activity['calorieburnt'] as double).toStringAsFixed(2)} kcal',
-                              style: const TextStyle(
-                                  color: Colors.white, fontSize: 12),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  );
-                } else if (state is WorkoutErrorState) {
-                  return Center(child: Text('Error: ${state.message}'));
-                } else {
-                  return const Center(child: Text('Unknown State'));
-                }
-              },
-              listener: (context, state) {
-                if (state is FetchWorkoutDetailsState) {
-                  print("Workout activities updated: ${state.fetchedActivities.length}");
-                } else if (state is WorkoutErrorState) {
-                  // Handle error state if needed
-                }
-              },
-            ),
-          ],
-        ),
-      ),
-    );
+  void initState() {
+    super.initState();
+    fetchWorkoutDetails();
   }
+
+@override
+Widget build(BuildContext context) {
+  return Commonscaffold(
+    title: "Workout",
+    body: Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Column(
+        children: [
+          
+              DropdownButton<String>(
+                value: _selectedExercise,
+                hint: const Text("Select Exercise"),
+                items: exercises.map((exercise) {
+                  return DropdownMenuItem<String>(
+                    value: exercise['name'] as String,
+                    child: Text(exercise['name'] as String),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedExercise = value!;
+                    _workoutTitle = _selectedExercise!;
+                    _selectedExerciseMET = exercises.firstWhere(
+                      (exercise) => exercise['name'] == _selectedExercise,
+                      orElse: () => {"value": 0.0},
+                    )['value'] as double;
+                  });
+                },
+              ),
+            
+            
+          const SizedBox(height: 20),
+          Text(
+            _workoutTitle,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 18),
+          Text(
+            "Timer: ${_formatTime(_seconds)}",
+            style: const TextStyle(fontSize: 18, ),
+          ),
+          const SizedBox(height: 18),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                onPressed: _isRunning ? _pauseTimer : _startTimer,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurple,
+                  foregroundColor: Colors.white,
+                ),
+                child: Text(_isRunning ? "Pause" : "Start"),
+              ),
+              ElevatedButton(
+                onPressed: _stopTimer,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurple,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text("Stop"),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          SizedBox(
+            height: 60,
+            child: Card(
+              color: Colors.white,
+              elevation: 0, // Remove shadow
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Calorie Burnt",
+                      style: TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      "${totalcalories.toStringAsFixed(0)} cal",
+                      style: TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          Expanded(
+            child: ListView.builder(
+              itemCount: workoutActivities.length,
+              itemBuilder: (context, index) {
+                final activity = workoutActivities[index];
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 3.0),
+                  child: Card(
+                    color: Colors.deepPurple,
+                    elevation: 0, // Remove shadow
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: ListTile(
+                      contentPadding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 14.0),
+                      title: 
+                        
+                        
+                          Text(
+                            activity['title'] as String,
+                            style: const TextStyle(color: Colors.white,fontWeight: FontWeight.bold),
+                          ),
+                          subtitle:Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [Text(
+                            _formatTime(activity['time'] as int),
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          Text(
+                            "${(activity['calorieburnt'] as double).toStringAsFixed(0)} cal",
+                            style: const TextStyle(color: Colors.white),
+                          ),],) 
+                        
+                      
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
 }

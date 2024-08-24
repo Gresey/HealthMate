@@ -5,10 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:heathmate/services/auth_service.dart';
 import 'package:heathmate/widgets/CommonScaffold.dart';
 import 'package:http/http.dart' as http;
-
-import 'package:timezone/data/latest.dart' as tz;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/standalone.dart';
+import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 class WaterGlass extends StatefulWidget {
@@ -22,13 +21,16 @@ class _WaterGlassState extends State<WaterGlass> {
   double _waterAmount = 0.0;
   final double _maxCapacity = 8.0;
   final TextEditingController _controller = TextEditingController();
-  String _selectedInterval = "1 hour";
-  final String baseUrl = 'http://localhost:4000';
+  String _selectedInterval = "5 minutes";
+  final String baseUrl = 'http://192.168.133.236:4000';
 
-  void initializeTimezone() {
-    tz.initializeTimeZones();
-  }
-
+ @override
+void initState() {
+  super.initState();
+  tz.initializeTimeZones(); // Ensure timezone data is initialized
+  getWaterConsumed();
+  _initializeNotifications();
+}
   @override
   void dispose() {
     _controller.dispose();
@@ -37,13 +39,6 @@ class _WaterGlassState extends State<WaterGlass> {
 
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
-
-  @override
-  void initState() {
-    super.initState();
-    getWaterConsumed();
-    _initializeNotifications();
-  }
 
   void _initializeNotifications() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
@@ -56,17 +51,17 @@ class _WaterGlassState extends State<WaterGlass> {
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
-  void _scheduleNotification(int intervalInHours) async {
-    initializeTimezone();
+  void _scheduleNotification(Duration interval) async {
+    final now = tz.TZDateTime.now(tz.local); // Get current local time
+    final scheduledTime = now.add(interval); // Calculate the scheduled time
 
-    final now = tz.TZDateTime.now(tz.local);
-    final notificationTime = now.add(Duration(hours: intervalInHours));
+    print('Scheduling notification for: $scheduledTime'); // Log for debugging
 
     await flutterLocalNotificationsPlugin.zonedSchedule(
       0,
       'Drink Water',
       'It\'s time to drink water!',
-      notificationTime,
+      scheduledTime,
       const NotificationDetails(
         android: AndroidNotificationDetails(
           'drink_water_channel',
@@ -74,13 +69,43 @@ class _WaterGlassState extends State<WaterGlass> {
           channelDescription: 'Reminder to drink water',
           importance: Importance.max,
           priority: Priority.high,
+          // Ensure notifications are displayed even if the app is in the background
+          // and that notifications are not blocked by battery optimizations
         ),
       ),
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
-      androidAllowWhileIdle: false,
+      matchDateTimeComponents: DateTimeComponents.time,
     );
   }
+
+void _testNotification() async {
+  final now = tz.TZDateTime.now(tz.local); // Get current local time
+  final scheduledTime = now.add(const Duration(minutes: 1)); // Schedule 1 minute from now
+
+  print('Current local time: $now'); // Log current time
+  print('Testing notification at: $scheduledTime'); // Log scheduled time
+
+  await flutterLocalNotificationsPlugin.zonedSchedule(
+    0,
+    'Test Notification',
+    'This is a test notification',
+    scheduledTime,
+    const NotificationDetails(
+      android: AndroidNotificationDetails(
+        'test_channel',
+        'Test Notifications',
+        channelDescription: 'Test notification channel',
+        importance: Importance.max,
+        priority: Priority.high,
+       
+      ),
+    ),
+    uiLocalNotificationDateInterpretation:
+        UILocalNotificationDateInterpretation.absoluteTime,
+    matchDateTimeComponents: DateTimeComponents.time,
+  );
+}
 
   void _showReminderSetDialog() {
     showDialog(
@@ -103,31 +128,33 @@ class _WaterGlassState extends State<WaterGlass> {
   }
 
   void _onSetReminder() {
-    int intervalInHours;
+    Duration interval;
 
     switch (_selectedInterval) {
+      case "5 minutes":
+        interval = const Duration(minutes: 5);
+        break;
       case "1 hour":
-        intervalInHours = 1;
+        interval = const Duration(hours: 1);
         break;
       case "2 hours":
-        intervalInHours = 2;
+        interval = const Duration(hours: 2);
         break;
       case "3 hours":
-        intervalInHours = 3;
+        interval = const Duration(hours: 3);
         break;
       case "4 hours":
-        intervalInHours = 4;
+        interval = const Duration(hours: 4);
         break;
       default:
-        intervalInHours = 1;
+        interval = const Duration(minutes: 5);
     }
 
     try {
-      _scheduleNotification(intervalInHours);
+      _scheduleNotification(interval);
       _showReminderSetDialog();
     } catch (e) {
       print("Error scheduling notification: $e");
-      // You can also show an error dialog if needed
     }
   }
 
@@ -214,18 +241,19 @@ class _WaterGlassState extends State<WaterGlass> {
     double fillHeight = (_waterAmount / _maxCapacity) * 200; // Adjusted height
 
     return Commonscaffold(
-      title:"Water Intake",
+      title: "Water Intake",
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            ElevatedButton(onPressed: _testNotification, child: Text("Click to Test Notification")),
             const SizedBox(height: 30),
             const Text(
               "Manage your water intake",
               style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  ),
+              ),
             ),
             const SizedBox(height: 20),
             Row(
@@ -244,7 +272,7 @@ class _WaterGlassState extends State<WaterGlass> {
                       _selectedInterval = newValue!;
                     });
                   },
-                  items: <String>['1 hour', '2 hours', '3 hours', '4 hours']
+                  items: <String>['5 minutes', '1 hour', '2 hours', '3 hours', '4 hours']
                       .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
@@ -369,6 +397,5 @@ class ScalePainter extends CustomPainter {
 }
 
 void main() {
-  tz.initializeTimeZones(); // Initialize timezone data
-  runApp(WaterGlass());
+  runApp(const MaterialApp(home: WaterGlass()));
 }

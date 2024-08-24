@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:convert';
 
@@ -13,7 +12,7 @@ part 'workout_state.dart';
 class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
   WorkoutBloc() : super(WorkoutInitial()) {
     on<FetchWorkoutDetailsEvent>(fetchworkoutdetailsevent);
-    on<AddWorkoutActivityEvent>(addWorkoutActivityEvent); 
+    on<AddWorkoutActivityEvent>(addWorkoutActivityEvent);
     on<SaveWorkoutDetailsEvent>(saveWorkoutDetailsEvent);
   }
 
@@ -26,9 +25,10 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
       emit(WorkoutErrorState("User is not authenticated"));
       return;
     }
+
     try {
       final uri =
-          Uri.parse('http://localhost:4000/getroutes/getworkoutdetails');
+          Uri.parse('http://192.168.133.236:4000/getroutes/getworkoutdetails');
       final response = await http.get(
         uri,
         headers: {
@@ -47,12 +47,12 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
           };
         }).toList();
 
-        double totalcalories = fetchedActivities.fold(
+        double totalCalories = fetchedActivities.fold(
           0.0,
           (sum, activity) => sum + (activity['calorieburnt'] as double),
         );
         emit(FetchWorkoutDetailsState(
-            totalCalories: totalcalories,
+            totalCalories: totalCalories,
             fetchedActivities: fetchedActivities));
       } else {
         emit(WorkoutErrorState(
@@ -63,7 +63,6 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     }
   }
 
-  // Event handler for adding a new workout activity
   Future<void> addWorkoutActivityEvent(
       AddWorkoutActivityEvent event, Emitter<WorkoutState> emit) async {
     if (state is FetchWorkoutDetailsState) {
@@ -71,13 +70,13 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
       final updatedActivities = List<Map<String, Object>>.from(currentState.fetchedActivities)
         ..add(event.newActivity);
 
-      double totalcalories = updatedActivities.fold(
+      double totalCalories = updatedActivities.fold(
         0.0,
         (sum, activity) => sum + (activity['calorieburnt'] as double),
       );
 
       emit(FetchWorkoutDetailsState(
-          totalCalories: totalcalories,
+          totalCalories: totalCalories,
           fetchedActivities: updatedActivities));
     }
   }
@@ -86,9 +85,8 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
       SaveWorkoutDetailsEvent event, Emitter<WorkoutState> emit) async {
     try {
       await addWorkoutDetails(event.activities, event.totalCalories);
-      emit(FetchWorkoutDetailsState(
-          totalCalories: event.totalCalories,
-          fetchedActivities: event.activities));
+      // After saving, fetch the updated data
+      add(FetchWorkoutDetailsEvent());
     } catch (e) {
       emit(WorkoutErrorState('Failed to save workout details: $e'));
     }
@@ -118,7 +116,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
       });
 
       final uri =
-          Uri.parse("http://localhost:4000/postroutes/saveworkoutdetails");
+          Uri.parse("http://192.168.133.236:4000/postroutes/saveworkoutdetails");
       final response = await http.post(
         uri,
         headers: {
@@ -132,8 +130,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
         print("Workout Data saved successfully");
         print('Response: ${response.body}');
       } else {
-        print(
-            'Failed to send Workout data. Status code: ${response.statusCode}');
+        print('Failed to send Workout data. Status code: ${response.statusCode}');
         print('Response body: ${response.body}');
       }
     } catch (e) {
