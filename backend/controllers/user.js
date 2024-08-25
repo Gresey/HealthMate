@@ -5,18 +5,15 @@ const JWT_SECRET = 'your_jwt_secret_key';
 
 // Signup Controller
 export async function handleusersignup(req, res) {
-    const { username, email, password ,age,gender,height} = req.body;
+    const { username, email, password ,age,gender,weight} = req.body;
 
     try {
-        const user = await User.create({ username, email, password ,age,gender,height});
+        const user = await User.create({ username, email, password ,age,gender,weight});
         res.status(201).json({ message: 'User created successfully', userId: user._id });
     } catch (error) {
         res.status(500).json({ message: 'Error creating user', error });
     }
 }
-
-
-
 export async function handleuserlogin(req, res) {
     const { email, password } = req.body;
 
@@ -49,5 +46,3 @@ export async function handleuserlogin(req, res) {
         res.status(500).json({ message: 'Error logging in', error });
     }
 }
-
-

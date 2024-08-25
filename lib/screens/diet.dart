@@ -74,7 +74,7 @@ class _DietState extends State<Diet> {
         final caloriesPer100g = nutritionData['calories'] as double;
         final calorieconsumed = (caloriesPer100g * quantity) / 100;
 
-        final uri = Uri.parse("http://192.168.133.236:4000/postroutes/savemeal");
+        final uri = Uri.parse("http://localhost:4000/postroutes/savemeal");
         final response = await http.post(
           uri,
           headers: {
@@ -115,7 +115,7 @@ class _DietState extends State<Diet> {
       return;
     }
     try {
-      final uri = Uri.parse('http://192.168.133.236:4000/getroutes/getmealdata');
+      final uri = Uri.parse('http://localhost:4000/getroutes/getmealdata');
       final response = await http.get(uri,
        headers: {
         'Authorization': 'Bearer $token',
@@ -163,7 +163,7 @@ class _DietState extends State<Diet> {
                 children: [
                   Text(
                     "Daily Calorie Intake",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                   ),
                   SizedBox(height: 10),
                 ],
@@ -176,7 +176,7 @@ class _DietState extends State<Diet> {
             SizedBox(height: 40),
             Text(
               "Your Today's meal:",
-              style: TextStyle( fontSize: 18),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
             SizedBox(height: 30),
             Expanded(
@@ -193,10 +193,10 @@ class _DietState extends State<Diet> {
                       ),
                       elevation: 0, // Remove shadow
                       child: ListTile(
-                        contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+                        contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
                         title: Text(
                           meal.mealconsumed,
-                          style: TextStyle(color: Colors.white, fontSize: 16.0,fontWeight: FontWeight.bold),
+                          style: TextStyle(color: Colors.white, fontSize: 16.0),
                         ),
                         subtitle: Text(
                           'Quantity: ${meal.quantity}g | Calories: ${meal.calorieburnt} cal',

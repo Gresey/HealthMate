@@ -65,14 +65,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.19.0"
-  crypto:
-    dependency: transitive
-    description:
-      name: crypto
-      sha256: ec30d999af904f33454ba22ed9a86162b35e52b44ac4807d1d93c288041d7d27
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.5"
   csslib:
     dependency: transitive
     description:
@@ -97,14 +89,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.10"
-  dialog_flowtter:
-    dependency: "direct main"
-    description:
-      name: dialog_flowtter
-      sha256: "2cdd694dbbb8673675ffb6a34d29d1bed922e38e5ed4ae63473b3c408ef82b19"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.0-nullsafety.0"
   equatable:
     dependency: transitive
     description:
@@ -208,14 +192,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  google_identity_services_web:
-    dependency: transitive
-    description:
-      name: google_identity_services_web
-      sha256: "5be191523702ba8d7a01ca97c17fca096822ccf246b0a9f11923a6ded06199b6"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.3.1+4"
   google_maps:
     dependency: transitive
     description:
@@ -264,14 +240,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.5.10"
-  googleapis_auth:
-    dependency: transitive
-    description:
-      name: googleapis_auth
-      sha256: befd71383a955535060acde8792e7efc11d2fccd03dd1d3ec434e85b68775938
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.6.0"
   html:
     dependency: transitive
     description:
@@ -312,14 +280,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.7"
-  json_annotation:
-    dependency: transitive
-    description:
-      name: json_annotation
-      sha256: "1ce844379ca14835a50d2f019a3099f419082cfdd231cd86a142af94dd5c6bb1"
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.9.0"
   leak_tracker:
     dependency: transitive
     description:

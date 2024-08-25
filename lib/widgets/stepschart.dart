@@ -1,12 +1,14 @@
 // @dart=2.17
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:heathmate/screens/steps.dart';
+import 'package:heathmate/services/auth_service.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:http/http.dart' as http;
 
-// Widget to display steps data in a chart
 class StepsChart extends StatelessWidget {
   final List<StepsData> chartData;
-
-  const StepsChart({super.key, required this.chartData});
+ const StepsChart({super.key, required this.chartData});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +19,7 @@ class StepsChart extends StatelessWidget {
         child: SfCartesianChart(
           title: ChartTitle(text: "Total Steps"),
           primaryXAxis: CategoryAxis(),
-          series: <ChartSeries<StepsData, String>>[
+          series: [
             ColumnSeries<StepsData, String>(
               dataSource: chartData,
               xValueMapper: (StepsData steps, _) => steps.key,
@@ -33,10 +35,12 @@ class StepsChart extends StatelessWidget {
   }
 }
 
-// Class to represent steps data
+ 
+
+
 class StepsData {
-  final String key; // Timestamp or category
-  final double value; // Steps count
+  final String key;
+  final dynamic value;
 
   StepsData(this.key, this.value);
 }

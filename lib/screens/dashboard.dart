@@ -11,6 +11,8 @@ import 'package:heathmate/widgets/CommonScaffold.dart';
 import 'package:heathmate/widgets/calorieburnt.dart';
 
 class Dashboard extends StatefulWidget {
+  const Dashboard({super.key});
+
   @override
   State<Dashboard> createState() => _DashboardState();
 }
@@ -34,7 +36,7 @@ class _DashboardState extends State<Dashboard> {
         body: BlocBuilder<DashboardBloc, DashboardState>(
           builder: (context, state) {
             if (state is DashboardInitial) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             } else if (state is UpdateDashboardWithValuesState) {
               final userData = state.userData;
               final calorieburnt = state.calorieburnt;
@@ -53,7 +55,7 @@ class _DashboardState extends State<Dashboard> {
             } else if (state is DashboardErrorState) {
               return Center(child: Text('Error: ${state.message}'));
             } else {
-              return Center(child: Text('Unknown State'));
+              return const Center(child: Text('Unknown State'));
             }
           },
         ),
@@ -75,14 +77,14 @@ class _DashboardState extends State<Dashboard> {
         children: <Widget>[
           Text(
             'Hello, $username',
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 26.0,
               fontWeight: FontWeight.bold,
               color: Colors.deepPurple,
             ),
           ),
           const SizedBox(height: 8.0),
-          Text(
+          const Text(
             'Keep pushing forward!',
             style: TextStyle(
               fontSize: 18.0,
@@ -91,7 +93,7 @@ class _DashboardState extends State<Dashboard> {
             ),
           ),
           const SizedBox(height: 12.0),
-          Text(
+          const Text(
             '"Success is not final, failure is not fatal: It is the courage to continue that counts."',
             style: TextStyle(
               fontSize: 16.0,
@@ -132,7 +134,7 @@ class _DashboardState extends State<Dashboard> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => WaterGlass()));
+                          builder: (context) => const WaterGlass()));
                 },
               ),
             ),
@@ -149,7 +151,7 @@ class _DashboardState extends State<Dashboard> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => Steps()));
+                          builder: (context) => const Steps()));
                 },
               ),
             ),
@@ -162,7 +164,7 @@ class _DashboardState extends State<Dashboard> {
                   await Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => Workout()),
+                        builder: (context) => const Workout()),
                   );
                   _dashboardBloc.add(DashboardFetchValuesEvent());
                 },
@@ -181,7 +183,7 @@ class _DashboardState extends State<Dashboard> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => Diet()));
+                          builder: (context) => const Diet()));
                 },
               ),
             ),
@@ -221,7 +223,7 @@ class _DashboardState extends State<Dashboard> {
             elevation: 5,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
-              side: BorderSide(
+              side: const BorderSide(
                 color: Colors.deepPurple, // Set border color
                 width: 2.0, // Border width
               ),

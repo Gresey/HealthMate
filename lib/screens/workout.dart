@@ -22,7 +22,7 @@ class _WorkoutPageState extends State<Workout> {
   bool _isRunning = false;
   String? _selectedExercise;
   double _selectedExerciseMET = 0.0;
-  double _weight = 50.0;
+  final double _weight = 50.0;
   double totalcalories = 0.0;
 
   final List<Map<String, Object>> exercises = [
@@ -134,7 +134,7 @@ class _WorkoutPageState extends State<Workout> {
   }
     try {
       final uri =
-          Uri.parse('http://192.168.133.236:4000/getroutes/getworkoutdetails');
+          Uri.parse('http://localhost:4000/getroutes/getworkoutdetails');
       final response = await http.get(uri,
        headers: {
         'Authorization': 'Bearer $token',
@@ -239,7 +239,7 @@ Future<void> addWorkoutDetails(List<Map<String, Object>> list) async {
       'totalCalories': totalcalories.toStringAsFixed(0),
     });
 
-    final uri = Uri.parse("http://192.168.133.236:4000/postroutes/saveworkoutdetails");
+    final uri = Uri.parse("http://localhost:4000/postroutes/saveworkoutdetails");
     final response = await http.post(
       uri,
       headers: {
@@ -410,7 +410,7 @@ Widget build(BuildContext context) {
                         
                           Text(
                             activity['title'] as String,
-                            style: const TextStyle(color: Colors.white,fontWeight: FontWeight.bold),
+                            style: const TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 12),
                           ),
                           subtitle:Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,

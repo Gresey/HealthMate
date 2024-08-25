@@ -16,69 +16,69 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     on<DashboardFetchValuesEvent>(fetchDashboardValues);
   }
 
-  Future<void> fetchDashboardValues(
-      DashboardFetchValuesEvent event, Emitter<DashboardState> emit) async {
-    final token = await AuthService().getToken();
+Future<void> fetchDashboardValues(
+    DashboardFetchValuesEvent event, Emitter<DashboardState> emit) async {
+  final token = await AuthService().getToken();
 
-    if (token == null) {
-      emit(DashboardErrorState('User is not authenticated'));
-      return;
-    }
+  if (token == null) {
+    emit(DashboardErrorState('User is not authenticated'));
+    return;
+  }
 
-    try {
-      final userDetailsResponse = await http.get(
-        Uri.parse('http://192.168.133.236:4000/getroutes/getuserdetails'),
+  try {
+    final userDetailsResponse = await http.get(
+      Uri.parse('http://localhost:4000/getroutes/getuserdetails'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (userDetailsResponse.statusCode == 200) {
+      final responseBody = jsonDecode(userDetailsResponse.body) as Map<String, dynamic>;
+
+      final username = responseBody['username'] as String? ?? 'Guest'; 
+      final stepsCount = responseBody['stepsCount'] as int? ?? 0;
+      final calorieBurn = (responseBody['calorieBurn'] as num?)?.toDouble() ?? 0.0;
+      final waterIntake = (responseBody['waterIntake'] as num?)?.toDouble() ?? 0.0;
+      final sleepHours = responseBody['sleep'] as int? ?? 0;
+      final calorieConsumed = (responseBody['calorieConsumed'] as num?)?.toDouble() ?? 0.0;
+
+      // Fetch calorie burnt data
+      final calorieBurntResponse = await http.get(
+        Uri.parse('http://localhost:4000/getroutes/getcalorieburnt'),
         headers: {
           'Authorization': 'Bearer $token',
         },
       );
 
-      if (userDetailsResponse.statusCode == 200) {
-        final responseBody = jsonDecode(userDetailsResponse.body) as Map<String, dynamic>;
+      List<CalorieBurntData> calorieburnt = [];
+      if (calorieBurntResponse.statusCode == 200) {
+        final calorieBurntResponseBody = jsonDecode(calorieBurntResponse.body) as Map<String, dynamic>;
+        final data = calorieBurntResponseBody['data'] as Map<String, dynamic>;
 
-        final username = (responseBody['username'] as String).split(' ').first;
-        final stepsCount = responseBody['stepsCount'] as int? ?? 0;
-        final calorieBurn = (responseBody['calorieBurn'] as num?)?.toDouble() ?? 0.0;
-        final waterIntake = (responseBody['waterIntake'] as num?)?.toDouble() ?? 0.0;
-        final sleepHours = responseBody['sleep'] as int? ?? 0;
-        final calorieConsumed = (responseBody['calorieconsumed'] as num?)?.toDouble() ?? 0.0;
-
-        // Fetch calorie burnt data
-        final calorieBurntResponse = await http.get(
-          Uri.parse('http://192.168.133.236:4000/getroutes/getcalorieburnt'),
-          headers: {
-            'Authorization': 'Bearer $token',
-          },
-        );
-
-        List<CalorieBurntData> calorieburnt = [];
-        if (calorieBurntResponse.statusCode == 200) {
-          final calorieBurntResponseBody = jsonDecode(calorieBurntResponse.body) as Map<String, dynamic>;
-          final data = calorieBurntResponseBody['data'] as Map<String, dynamic>;
-
-          calorieburnt = data.entries.map((entry) {
-            return CalorieBurntData(entry.key, entry.value);
-          }).toList();
-        } else {
-          throw Exception('Failed to load calorie burnt data');
-        }
-
-        emit(UpdateDashboardWithValuesState(
-          userData: {
-            'username': username,
-            'stepsCount': stepsCount,
-            'calorieBurn': calorieBurn,
-            'waterIntake': waterIntake,
-            'sleepHours': sleepHours,
-            'calorieConsumed': calorieConsumed,
-          },
-          calorieburnt: calorieburnt,
-        ));
+        calorieburnt = data.entries.map((entry) {
+          return CalorieBurntData(entry.key, entry.value);
+        }).toList();
       } else {
-        emit(DashboardErrorState('Failed to fetch user details'));
+        throw Exception('Failed to load calorie burnt data');
       }
-    } catch (e) {
-      emit(DashboardErrorState('Error: $e'));
+
+      emit(UpdateDashboardWithValuesState(
+        userData: {
+          'username': username,
+          'stepsCount': stepsCount,
+          'calorieBurn': calorieBurn,
+          'waterIntake': waterIntake,
+          'sleepHours': sleepHours,
+          'calorieConsumed': calorieConsumed,
+        },
+        calorieburnt: calorieburnt,
+      ));
+    } else {
+      emit(DashboardErrorState('Failed to load user details'));
     }
+  } catch (e) {
+    emit(DashboardErrorState('Error: $e'));
   }
+}
 }

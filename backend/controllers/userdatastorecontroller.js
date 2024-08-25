@@ -2,8 +2,6 @@ import UserData from '../models/userData.js';
 import Workout from '../models/workoutmodel.js';
 import Meal from '../models/mealmodel.js';
 import usermodel from '../models/user.js';
-import User from '../models/user.js';
-
 
 
 
@@ -131,10 +129,15 @@ export const WorkDetailscontroller = async (req, res) => {
   }
 
   try {
-    const user = await usermodel.findById(userId);
+    const user = await usermodel.findById({ _id: userId });
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
+    }
+
+    const userWeight = user.weight;
+    if (!userWeight || isNaN(userWeight)) {
+      return res.status(400).json({ error: 'User weight is invalid or not provided' });
     }
 
     const currentDay = new Date().toLocaleString('en-US', { weekday: 'long' });
@@ -152,26 +155,29 @@ export const WorkDetailscontroller = async (req, res) => {
     await userData.save();
 
     for (const workout of workouts) {
-      const { title, time, calorieburnt } = workout;
+      const { title, time, MET } = workout;
 
-      const existingWorkout = await Workout.findOne({
-        userId,
-        NameofWorkout: title,
-        timeofworkout: time,
-      });
+      const timeInHours = time / 3600;
+      const calorieburnt = MET * userWeight * timeInHours;
 
-      if (existingWorkout) {
-        existingWorkout.calorieburnt = Math.round(calorieburnt);
-        await existingWorkout.save();
-      } else {
+      // const existingWorkout = await Workout.findOne({
+      //   userId,
+      //   NameofWorkout: title,
+      //   timeofworkout: time,
+      // });
+
+      // if (existingWorkout) {
+      //   existingWorkout.calorieburnt = Math.round(calorieburnt);
+      //   await existingWorkout.save();
+      // } else {
         const newWorkout = new Workout({
           userId: userId,
           NameofWorkout: title,
           timeofworkout: time,
-          calorieburnt:calorieburnt,
+          calorieburnt: Math.round(calorieburnt),
         });
         await newWorkout.save();
-      }
+      
     }
 
     console.log('Workouts successfully saved or updated');
@@ -183,39 +189,44 @@ export const WorkDetailscontroller = async (req, res) => {
 };
 
 
-
 export const savemealcontroller = async (req, res) => {
-    const Uid = req.user.userId;
-    const { mealName, quantity, calorieconsumed,totalcaloriesconsumed } = req.body;
-    const currentDay = new Date().toLocaleString('en-US', { weekday: 'long' });
-    const user=await UserData.findOne({userId:Uid});
-    if (!user) {
-      return res.status(404).send("User not found");
+  const Uid = req.user.userId;
+  const { mealName, quantity, calorieconsumed, totalcaloriesconsumed } = req.body;
+
+  if (!mealName || quantity == null || calorieconsumed == null) {
+    return res.status(400).send("Missing required fields");
   }
-    user.calorieConsumed[currentDay]=totalcaloriesconsumed.toFixed(2);
-   await user.save();
-    if (!mealName || quantity == null || calorieconsumed == null) {
-      return res.status(400).send("Missing required fields");
-    }
-    
-    try {
-      
+  const day = new Date().toLocaleString('en-US', { weekday: 'long' });
+
+  try {
+      let user = await UserData.findOne({ userId: Uid });
+
+      if (!user) {
+          user = new UserData({ userId: Uid });
+      }
+
+      user.calorieConsumed[day] = totalcaloriesconsumed;
+
+      await user.save();
+
       const mealData = new Meal({
-        userId: Uid,
-        date: new Date(),
-        NameofFood: mealName,
-        quantity:quantity,
-        calorieconsumed:calorieconsumed,
-        totalcaloriesconsumed:totalcaloriesconsumed,
+          userId: Uid,
+          date: new Date(),
+          NameofFood: mealName,
+          quantity: quantity,
+          calorieconsumed: calorieconsumed,
+          totalcaloriesconsumed: totalcaloriesconsumed,
       });
-  
+
       await mealData.save();
-      res.status(200).send("Meal Data saved successfully");
-    } catch (err) {
+      res.status(200).send("Meal data saved successfully");
+
+  } catch (err) {
       console.error("Error saving meal data:", err);
       res.status(500).send('Error saving meal data');
-    }
+  }
 };
+
 export const savesleepdatacontroller = async (req, res) => {
   const userId = req.user.userId;
   const { hours } = req.body;

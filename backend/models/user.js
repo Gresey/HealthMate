@@ -20,10 +20,19 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    height: Number,
-    gender: String,
-    age: Number,
-    weight: Number
+    
+    gender:{
+        type: String,
+        required: true
+    },
+    age: {
+        type: Number,
+        required: true
+    },
+    weight: {
+        type:Number,
+        required:true,
+    }
 }, { timestamps: true });
 
 // Pre-save middleware to hash the password before saving

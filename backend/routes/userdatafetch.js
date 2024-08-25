@@ -3,7 +3,8 @@ const router = express.Router();
 import {
     getcalorieburntcontroller, getcalorieconsumedcontroller, getstepscontroller
     , getMealCardDetails, getworkoutdetails,
-    GetWaterIntakeController,getsleepdatacontroller,getuserdetails
+    GetWaterIntakeController,getsleepdatacontroller,
+    getuserdetails
 } from '../controllers/userdatafetchcontroller.js';
 
 import authMiddleware from '../middleware/auth.js';
