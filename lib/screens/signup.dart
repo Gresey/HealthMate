@@ -238,7 +238,7 @@ class _SignupScreenState extends State<SignupScreen> {
   onPressed: () {
     _signup();
   },
-  child: Text('Login'),
+  child: Text('Sign Up'),
   style: ElevatedButton.styleFrom(
     foregroundColor: Colors.white, backgroundColor: Colors.deepPurple, // Text color
     minimumSize: Size(double.infinity, 40), // Width and height

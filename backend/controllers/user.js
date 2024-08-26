@@ -15,7 +15,7 @@ export async function handleusersignup(req, res) {
     }
 }
 export async function handleuserlogin(req, res) {
-    const { email, password } = req.body;
+    const { email } = req.body;
 
     try {
         const user = await User.findOne({ email });
@@ -23,10 +23,7 @@ export async function handleuserlogin(req, res) {
             return res.status(400).json({ message: 'Invalid email or password' });
         }
 
-        const isMatch = await user.matchPassword(password);
-        if (!isMatch) {
-            return res.status(400).json({ message: 'Invalid email or password' });
-        }
+       
 
         // Fetch or initialize user data
         let userData = await UserData.findOne({ userId: user._id });

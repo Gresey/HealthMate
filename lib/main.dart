@@ -1,5 +1,9 @@
 // @dart=2.17
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:heathmate/firebase_options.dart';
 import 'package:heathmate/screens/dashboard.dart';
 import 'package:heathmate/screens/diet.dart';
 import 'package:heathmate/screens/sleep.dart';
@@ -9,9 +13,17 @@ import 'package:heathmate/screens/water.dart';
 import 'package:heathmate/widgets/dietchart.dart';
 import 'package:heathmate/widgets/stepschart.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+Future<void> main() async {
+ 
+ await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+);
+
+
+    runApp(const MyApp());
+
+  
+ }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

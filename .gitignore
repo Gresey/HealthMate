@@ -43,3 +43,19 @@ app.*.map.json
 /android/app/release
 
 /backend/node_modules
+
+
+# Firebase service account key
+serviceAccountKey.json
+
+# Firebase functions dependencies
+functions/node_modules/
+functions/.env
+functions/.env.local
+functions/.env.*.local
+firebase.json
+
+# Firebase hosting cache
+firebase-debug.log
+/android/app/google-services.json
+database.rules.json

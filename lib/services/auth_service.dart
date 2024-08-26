@@ -1,18 +1,26 @@
 // @dart=2.17
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   final String baseUrl = 'http://localhost:4000/auth';
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
 
   Future<bool> signup(String username, String email, String password, String age, String weight, String gender) async {
     try {
+       UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
       final response = await http.post(
         Uri.parse('$baseUrl/signup'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'username': username, 'email': email, 'password': password, 'age': age, 'weight':weight,'gender':gender}),
       );
+      
       if (response.statusCode == 201) {
         return true;
       } else {
@@ -27,10 +35,11 @@ class AuthService {
 
   Future<String?> login(String email, String password) async {
     try {
+      UserCredential userCredential=await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
       final response = await http.post(
         Uri.parse('$baseUrl/login'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email, 'password': password}),
+        body: jsonEncode({'email': email}),
       );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -55,5 +64,8 @@ class AuthService {
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('auth_token');
+  }
+   Future<void> sendPasswordResetLink(String email) async {
+    await _firebaseAuth.sendPasswordResetEmail(email: email);
   }
 }

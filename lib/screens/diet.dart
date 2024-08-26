@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:heathmate/screens/DietPlan.dart';
 import 'package:heathmate/services/auth_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart' show rootBundle;
@@ -157,7 +158,7 @@ class _DietState extends State<Diet> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             const Center(
               child: Column(
                 children: [
@@ -173,13 +174,17 @@ class _DietState extends State<Diet> {
               caloriesConsumed: getTotalCaloriesConsumed(), 
               maxCalories: maxCalorieLimit
             ),
-            SizedBox(height: 40),
-            Text(
+            const SizedBox(height: 40),
+             ElevatedButton(onPressed: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>DietPlan()));
+            }, child: Text("Get Personalized Diet Plan")),
+          const SizedBox(height: 40),
+            const Text(
               "Your Today's meal:",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
-            SizedBox(height: 30),
-            Expanded(
+            const SizedBox(height: 30),
+             Expanded(
               child: ListView.builder(
                 itemCount: meals.length,
                 itemBuilder: (context, index) {
@@ -193,14 +198,14 @@ class _DietState extends State<Diet> {
                       ),
                       elevation: 0, // Remove shadow
                       child: ListTile(
-                        contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                        contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
                         title: Text(
                           meal.mealconsumed,
-                          style: TextStyle(color: Colors.white, fontSize: 16.0),
+                          style: const TextStyle(color: Colors.white, fontSize: 16.0),
                         ),
                         subtitle: Text(
                           'Quantity: ${meal.quantity}g | Calories: ${meal.calorieburnt} cal',
-                          style: TextStyle(color: Colors.white, fontSize: 14.0),
+                          style: const TextStyle(color: Colors.white, fontSize: 14.0),
                         ),
                       ),
                     ),
@@ -208,7 +213,7 @@ class _DietState extends State<Diet> {
                 },
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.deepPurple,
@@ -219,13 +224,13 @@ class _DietState extends State<Diet> {
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      title: Text('Add Meal'),
+                      title: const Text('Add Meal'),
                       content: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           DropdownButton<String>(
                             value: selectedFoodName,
-                            hint: Text('Select food'),
+                            hint: const Text('Select food'),
                             items: foodNames.map((foodName) {
                               return DropdownMenuItem<String>(
                                 value: foodName,
@@ -241,7 +246,7 @@ class _DietState extends State<Diet> {
                           TextField(
                             controller: _quantity,
                             keyboardType: TextInputType.number,
-                            decoration: InputDecoration(labelText: 'Quantity (g)'),
+                            decoration: const InputDecoration(labelText: 'Quantity (g)'),
                           ),
                         ],
                       ),
@@ -254,20 +259,20 @@ class _DietState extends State<Diet> {
                               Navigator.of(context).pop();
                             }
                           },
-                          child: Text('Add Meal'),
+                          child: const Text('Add Meal'),
                         ),
                         TextButton(
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
-                          child: Text('Cancel'),
+                          child: const Text('Cancel'),
                         ),
                       ],
                     );
                   },
                 );
               },
-              child: Text('Add Meal'),
+              child: const Text('Add Meal'),
             ),
           ],
         ),
