@@ -15,13 +15,10 @@ A  comprehensive fitness tracking application designed to monitor and visualize 
 
 
 ## Screens
-<img src="https://github.com/user-attachments/assets/aa84f7c1-a444-4531-9678-8a9ca1797400" width="300" alt="Splash Screen"/>
-<img src="https://github.com/user-attachments/assets/5c89cf21-5ed3-411d-96aa-728d4f00c45f" width="300" alt="Login"/>
-<img src="https://github.com/user-attachments/assets/fdeb118f-cfc5-485e-8cf8-72f11c5f89de" width="300" alt="Signup"/>
+<img src="https://github.com/user-attachments/assets/aa84f7c1-a444-4531-9678-8a9ca1797400" width="200" alt="Splash Screen"/>
+<img src="https://github.com/user-attachments/assets/5c89cf21-5ed3-411d-96aa-728d4f00c45f" width="200" alt="Login"/>
+<img src="https://github.com/user-attachments/assets/fdeb118f-cfc5-485e-8cf8-72f11c5f89de" width="200" alt="Signup"/>
 
-
-
-https://github.com/user-attachments/assets/3a94c020-693c-44db-becd-4d4c0cd55128
 
 
 
@@ -36,11 +33,11 @@ https://github.com/user-attachments/assets/60f1afc0-ffa6-4c6a-abfd-c60e17182efb
    - **Activity Timer**: Users can set timers for their workout sessions or specific activities. This feature helps in keeping track of the duration of each workout, ensuring that users stay on schedule.
    - **Calories Burned Tracker**: The screen also displays the number of calories burned during the workout session, providing real-time feedback on the effectiveness of the exercise. This information is crucial for users aiming to meet their fitness goals.
 
-<img src="https://github.com/user-attachments/assets/879450da-8009-4acb-b466-d128b5b61be4" width="300" alt="Workout"/>  
+<img src="https://github.com/user-attachments/assets/879450da-8009-4acb-b466-d128b5b61be4" width="200" alt="Workout"/>  
 
 ### 2. **Sleep Tracking Screen**
    - This screen provides detailed information on sleep patterns, including total hours slept, sleep quality, and trends over the week.
-    <img src="https://github.com/user-attachments/assets/4e1bf716-90b1-424a-809b-5d343d70c168" width="300" alt="Sleep Track"/>  
+    <img src="https://github.com/user-attachments/assets/4e1bf716-90b1-424a-809b-5d343d70c168" width="200" alt="Sleep Track"/>  
 
 ### 3. **Water Intake Tracking Screen**
    - **Daily Water Logging**: Allows users to log their daily water consumption easily. This screen helps users track their hydration levels and ensure they are meeting their daily water intake goals.
