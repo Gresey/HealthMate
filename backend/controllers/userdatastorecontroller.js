@@ -141,17 +141,19 @@ export const WorkDetailscontroller = async (req, res) => {
     }
 
     const currentDay = new Date().toLocaleString('en-US', { weekday: 'long' });
-    const userData = await UserData.findOne({ userId: userId });
+    let userData = await UserData.findOne({ userId: userId });
 
     if (!userData) {
-      return res.status(404).json({ error: 'User data not found' });
+      userData = new UserData({ userId: userId }); // Initialize if not existing
     }
 
     if (!userData.calorieBurnt[currentDay]) {
       userData.calorieBurnt[currentDay] = 0;
     }
 
+   
     userData.calorieBurnt[currentDay] = totalCalories;
+
     await userData.save();
 
     for (const workout of workouts) {
@@ -160,16 +162,16 @@ export const WorkDetailscontroller = async (req, res) => {
       const timeInHours = time / 3600;
       const calorieburnt = MET * userWeight * timeInHours;
 
-      // const existingWorkout = await Workout.findOne({
-      //   userId,
-      //   NameofWorkout: title,
-      //   timeofworkout: time,
-      // });
+      const existingWorkout = await Workout.findOne({
+        userId,
+        NameofWorkout: title,
+        timeofworkout: time,
+      });
 
-      // if (existingWorkout) {
-      //   existingWorkout.calorieburnt = Math.round(calorieburnt);
-      //   await existingWorkout.save();
-      // } else {
+      if (existingWorkout) {
+        existingWorkout.calorieburnt = Math.round(calorieburnt);
+        await existingWorkout.save();
+      } else {
         const newWorkout = new Workout({
           userId: userId,
           NameofWorkout: title,
@@ -177,7 +179,7 @@ export const WorkDetailscontroller = async (req, res) => {
           calorieburnt: Math.round(calorieburnt),
         });
         await newWorkout.save();
-      
+      }
     }
 
     console.log('Workouts successfully saved or updated');

@@ -182,7 +182,7 @@ export const getworkoutdetails = async (req, res) => {
 };
 
 
-  export const getsleepdatacontroller = async (req, res) => {
+ export const getsleepdatacontroller = async (req, res) => {
     const userId = req.user.userId;
 
     if (!userId) {

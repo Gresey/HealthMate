@@ -34,7 +34,7 @@ Future<void> _fetchSleepData() async {
 
     try {
         final response = await http.get(
-            Uri.parse('http://localhost:4000/getroutes/getsleepdata'),
+            Uri.parse('http://192.168.29.112:3000/getroutes/getsleepdata'),
             headers: {
                 'Authorization': 'Bearer $token',
             },
@@ -72,7 +72,7 @@ Future<void> _fetchSleepData() async {
 
     try {
         final response = await http.post(
-            Uri.parse('http://localhost:4000/postroutes/savesleepdata'),
+            Uri.parse('http://192.168.29.112:3000/postroutes/savesleepdata'),
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer $token',
@@ -176,7 +176,11 @@ Future<void> _fetchSleepData() async {
                         padding: const EdgeInsets.all(1.0),
                         child: SfCartesianChart(
                           title: ChartTitle(text: "Sleep Hours This Week"),
-                          primaryXAxis: CategoryAxis(),
+                         primaryXAxis: CategoryAxis(
+            labelStyle: TextStyle(
+              fontSize: 8, 
+            ),
+          ),
                           primaryYAxis: NumericAxis(
                             isVisible: false, // Hide Y-axis scale
                           ),

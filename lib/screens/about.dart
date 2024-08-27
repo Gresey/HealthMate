@@ -1,28 +1,23 @@
 // @dart=2.17
 import 'package:flutter/material.dart';
+import 'package:heathmate/widgets/CommonScaffold.dart';
 
 class AboutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('About'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      
+       appBar: AppBar(title: const Text("About"),),
+      
+      body: const Padding(
+        padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'About This App',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
+          
             SizedBox(height: 10),
             Text(
-              'This app helps you track your sleep patterns and provides insights '
-              'to improve your sleep quality. You can log your sleep hours, view '
-              'your sleep data over the past week, and get recommendations based '
-              'on your sleep habits.',
+              'HealthMate is a fitness tracking application that monitors and visualizes key health metrics such as water intake, sleep, workout time, diet, calories burned, and calories consumed. Users can view their data through weekly graphs, helping them to track progress and adjust their health routines accordingly. The app leverages Flutter and Dart for cross-platform development, BLoC for state management, and uses a backend built with Node.js, MongoDB, and Express to handle data through RESTful APIs.',
               style: TextStyle(fontSize: 16),
             ),
             SizedBox(height: 20),
@@ -32,23 +27,17 @@ class AboutPage extends StatelessWidget {
             ),
             SizedBox(height: 10),
             Text(
-              '- Log daily sleep hours\n'
-              '- View sleep data in a graphical format\n'
-              '- Receive personalized sleep recommendations\n'
-              '- Track your sleep progress over time',
+              '- Weekly graphs for tracking water intake, sleep, workout duration, diet, and calories\n'
+              '- Real-time monitoring of fitness and health metrics\n'
+              '- Data visualization for easier tracking and analysis\n'
+              '- Cross-platform support with Flutter and Dart\n'
+              '- Efficient state management using BLoC\n',
+
               style: TextStyle(fontSize: 16),
             ),
             SizedBox(height: 20),
-            Text(
-              'Contact Us:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'If you have any questions or feedback, feel free to reach out to us at '
-              'support@example.com.',
-              style: TextStyle(fontSize: 16),
-            ),
+          
+           
           ],
         ),
       ),

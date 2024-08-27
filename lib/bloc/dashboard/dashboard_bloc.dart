@@ -27,7 +27,7 @@ Future<void> fetchDashboardValues(
 
   try {
     final userDetailsResponse = await http.get(
-      Uri.parse('http://localhost:4000/getroutes/getuserdetails'),
+      Uri.parse('http://192.168.29.112:3000/getroutes/getuserdetails'),
       headers: {
         'Authorization': 'Bearer $token',
       },
@@ -45,7 +45,7 @@ Future<void> fetchDashboardValues(
 
       // Fetch calorie burnt data
       final calorieBurntResponse = await http.get(
-        Uri.parse('http://localhost:4000/getroutes/getcalorieburnt'),
+        Uri.parse('http://192.168.29.112:3000/getroutes/getcalorieburnt'),
         headers: {
           'Authorization': 'Bearer $token',
         },

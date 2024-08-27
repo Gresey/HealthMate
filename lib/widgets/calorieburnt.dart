@@ -6,7 +6,7 @@ class CalorieBurntScreen extends StatelessWidget {
   final List<CalorieBurntData> calorieburnt;
 
   // Constructor to accept calorie data
-   CalorieBurntScreen({super.key, required this.calorieburnt});
+  CalorieBurntScreen({super.key, required this.calorieburnt});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,11 @@ class CalorieBurntScreen extends StatelessWidget {
         padding: const EdgeInsets.all(10.0),
         child: SfCartesianChart(
           title: ChartTitle(text: "Total Calorie Burnt"),
-          primaryXAxis: CategoryAxis(),
+          primaryXAxis: CategoryAxis(
+            labelStyle: TextStyle(
+              fontSize: 8, 
+            ),
+          ),
           primaryYAxis: NumericAxis(
             isVisible: false, // Hide Y-axis scale
           ),

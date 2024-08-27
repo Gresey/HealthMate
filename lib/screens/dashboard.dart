@@ -125,6 +125,24 @@ class _DashboardState extends State<Dashboard> {
                 },
               ),
             ),
+            
+          ],
+        ),
+        Row(
+          children: <Widget>[
+            // Expanded(
+            //   child: _buildCard(
+            //     title: "Steps",
+            //     description: "Steps Count: ${userData['stepsCount']}",
+            //     icon: Icons.legend_toggle_sharp,
+            //     onTap: () {
+            //       Navigator.push(
+            //           context,
+            //           MaterialPageRoute(
+            //               builder: (context) => const Steps()));
+            //     },
+            //   ),
+            // ),
             Expanded(
               child: _buildCard(
                 title: "Water",
@@ -135,23 +153,6 @@ class _DashboardState extends State<Dashboard> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => const WaterGlass()));
-                },
-              ),
-            ),
-          ],
-        ),
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: _buildCard(
-                title: "Steps",
-                description: "Steps Count: ${userData['stepsCount']}",
-                icon: Icons.legend_toggle_sharp,
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const Steps()));
                 },
               ),
             ),

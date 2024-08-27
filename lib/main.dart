@@ -13,17 +13,12 @@ import 'package:heathmate/screens/water.dart';
 import 'package:heathmate/widgets/dietchart.dart';
 import 'package:heathmate/widgets/stepschart.dart';
 
-Future<void> main() async {
- 
- await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-);
 
-
-    runApp(const MyApp());
-
-  
- }
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

@@ -31,6 +31,6 @@ app.use('/auth', user);
 app.use('/getroutes', fetchdata);
 app.use('/postroutes', postdata);
 
-app.listen(4000, '0.0.0.0', () => {
-  console.log('Server is running on port 4000');
+app.listen(3000, '0.0.0.0', () => {
+  console.log('Server is running on port 3000');
 });

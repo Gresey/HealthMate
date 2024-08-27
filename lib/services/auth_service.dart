@@ -5,23 +5,23 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  final String baseUrl = 'http://localhost:4000/auth';
+  final String baseUrl = 'http://192.168.29.112:3000/auth';
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
 
   Future<bool> signup(String username, String email, String password, String age, String weight, String gender) async {
     try {
-       UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+      
       final response = await http.post(
         Uri.parse('$baseUrl/signup'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'username': username, 'email': email, 'password': password, 'age': age, 'weight':weight,'gender':gender}),
       );
+      UserCredential userCredential=await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
       
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
+         print('Signup successful');
+
         return true;
       } else {
         print('Failed to sign up. Status code: ${response.statusCode}, Response: ${response.body}');

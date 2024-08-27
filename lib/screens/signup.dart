@@ -40,9 +40,7 @@ class _SignupScreenState extends State<SignupScreen> {
       height: 40,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.0),
-        
-          color: Colors.deepPurple,
-        
+        color: Colors.deepPurple,
       ),
       child: ElevatedButton(
         onPressed: onPressed,
@@ -57,7 +55,7 @@ class _SignupScreenState extends State<SignupScreen> {
         ),
         child: ShaderMask(
           shaderCallback: (bounds) => LinearGradient(
-            colors: [ Colors.deepPurple.shade400],
+            colors: [Colors.deepPurple.shade400],
           ).createShader(bounds),
           child: Text(
             text,
@@ -151,7 +149,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           SizedBox(height: 20),
                           SizedBox(
                             width: double.infinity,
-                            height: 35, 
+                            height: 38,
                             child: TextField(
                               controller: _usernameController,
                               decoration: InputDecoration(
@@ -162,10 +160,10 @@ class _SignupScreenState extends State<SignupScreen> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 15),
+                          SizedBox(height: 12),
                           SizedBox(
                             width: double.infinity,
-                            height: 35, 
+                            height: 38,
                             child: TextField(
                               controller: _emailController,
                               decoration: InputDecoration(
@@ -176,10 +174,10 @@ class _SignupScreenState extends State<SignupScreen> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 15),
+                          SizedBox(height: 12),
                           SizedBox(
                             width: double.infinity,
-                            height: 35, 
+                            height: 38,
                             child: TextField(
                               controller: _passwordController,
                               obscureText: true,
@@ -191,10 +189,10 @@ class _SignupScreenState extends State<SignupScreen> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 15),
+                          SizedBox(height: 12),
                           SizedBox(
                             width: double.infinity,
-                            height: 35, 
+                            height: 38,
                             child: TextField(
                               controller: _genController,
                               decoration: InputDecoration(
@@ -205,10 +203,10 @@ class _SignupScreenState extends State<SignupScreen> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 15),
+                          SizedBox(height: 12),
                           SizedBox(
                             width: double.infinity,
-                            height:35, 
+                            height: 38,
                             child: TextField(
                               controller: _weightController,
                               decoration: InputDecoration(
@@ -219,10 +217,10 @@ class _SignupScreenState extends State<SignupScreen> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 15),
+                          SizedBox(height: 12),
                           SizedBox(
                             width: double.infinity,
-                            height: 35, 
+                            height: 38,
                             child: TextField(
                               controller: _ageController,
                               decoration: InputDecoration(
@@ -234,20 +232,21 @@ class _SignupScreenState extends State<SignupScreen> {
                             ),
                           ),
                           SizedBox(height: 20),
-                            ElevatedButton(
-  onPressed: () {
-    _signup();
-  },
-  child: Text('Sign Up'),
-  style: ElevatedButton.styleFrom(
-    foregroundColor: Colors.white, backgroundColor: Colors.deepPurple, // Text color
-    minimumSize: Size(double.infinity, 40), // Width and height
-    padding: EdgeInsets.symmetric(horizontal: 16.0), // Horizontal padding
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(12), // Rounded corners
-    ),
-  ),
-),
+                          ElevatedButton(
+                            onPressed: () {
+                              _signup();
+                            },
+                            child: Text('Sign Up'),
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.deepPurple, // Text color
+                              minimumSize: Size(double.infinity, 40), // Width and height
+                              padding: EdgeInsets.symmetric(horizontal: 16.0), // Horizontal padding
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12), // Rounded corners
+                              ),
+                            ),
+                          ),
                           SizedBox(height: 10),
                           TextButton(
                             onPressed: () {

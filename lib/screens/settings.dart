@@ -17,22 +17,42 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
   }
 
-  void _contactUs() {
-    // Implement your contact us logic here
-    print('Contact us clicked');
-  }
+ void _contactUs() {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      TextEditingController _queryController = TextEditingController();
 
-  void _viewPrivacyPolicy() {
-    // Implement your privacy policy logic here
-    print('Privacy policy clicked');
-  }
+      return AlertDialog(
+        title: Text('Contact Us'),
+        content: TextField(
+          controller: _queryController,
+          decoration: InputDecoration(
+            hintText: 'Enter your query',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              // Implement your send logic here
+              print('Query: ${_queryController.text}');
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            child: Text('Send'),
+          ),
+        ],
+      );
+    },
+  );
+}
 
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Settings'),
-        backgroundColor: Colors.deepPurple,
+       
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -48,10 +68,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               title: Text('Contact Us'),
               onTap: _contactUs,
             ),
-            ListTile(
-              title: Text('Privacy Policy'),
-              onTap: _viewPrivacyPolicy,
-            ),
+            
           ],
         ),
       ),
