@@ -27,39 +27,42 @@ A  comprehensive fitness tracking application designed to monitor and visualize 
    
 https://github.com/user-attachments/assets/60f1afc0-ffa6-4c6a-abfd-c60e17182efb
 
-
-
-### 2. **Workout Screen**
-   - **Activity Timer**: Users can set timers for their workout sessions or specific activities. This feature helps in keeping track of the duration of each workout, ensuring that users stay on schedule.
-   - **Calories Burned Tracker**: The screen also displays the number of calories burned during the workout session, providing real-time feedback on the effectiveness of the exercise. This information is crucial for users aiming to meet their fitness goals.
-
-<img src="https://github.com/user-attachments/assets/879450da-8009-4acb-b466-d128b5b61be4" width="200" alt="Workout"/>  
-
-### 2. **Sleep Tracking Screen**
-   - This screen provides detailed information on sleep patterns, including total hours slept, sleep quality, and trends over the week.
-    <img src="https://github.com/user-attachments/assets/4e1bf716-90b1-424a-809b-5d343d70c168" width="200" alt="Sleep Track"/>  
-
-### 3. **Water Intake Tracking Screen**
+### 2. **Water Intake Tracking Screen**
    - **Daily Water Logging**: Allows users to log their daily water consumption easily. This screen helps users track their hydration levels and ensure they are meeting their daily water intake goals.
    - **Hydration Reminders**: Users can set customizable reminders to prompt them to drink water throughout the day. This feature ensures that users stay hydrated by providing timely notifications.
 
 
 https://github.com/user-attachments/assets/7c165895-efbe-46c7-9fa3-1324925c5374
 
-### 4. **Calorie Tracking Screen**
+### 3. **Calorie Tracking Screen**
    - **Daily Calorie Logging**: Users can easily track their daily calorie intake by logging what they have consumed for each meal. The app will automatically calculate the total calories consumed based on the input. 
    - **Daily Progress Bar**: The screen features a progress bar that visually represents the percentage of the daily calorie goal that has been consumed. This helps users stay on track with their dietary goals by providing real-time feedback on their calorie balance.
 
 https://github.com/user-attachments/assets/110eb8c8-1425-45a9-b8cb-849b0ddce3f2
 
-
-
-
-### 5. **Map Finder Screen**
+### 4. **Map Finder Screen**
    - Displays a map where users can find nearby hospitals, medical facilities, and gyms. This feature is particularly useful for users who are new to an area or are looking for health-related services.
 
 
 https://github.com/user-attachments/assets/a7b3c1a5-1f12-4720-8ce0-d8dfd3bbbe57
+
+
+
+### 5. **Workout Screen**
+   - **Activity Timer**: Users can set timers for their workout sessions or specific activities. This feature helps in keeping track of the duration of each workout, ensuring that users stay on schedule.
+   - **Calories Burned Tracker**: The screen also displays the number of calories burned during the workout session, providing real-time feedback on the effectiveness of the exercise. This information is crucial for users aiming to meet their fitness goals.
+
+<img src="https://github.com/user-attachments/assets/879450da-8009-4acb-b466-d128b5b61be4" width="200" alt="Workout"/>  
+
+### 6. **Sleep Tracking Screen**
+   - This screen provides detailed information on sleep patterns, including total hours slept, sleep quality, and trends over the week.
+
+    
+  <img src="https://github.com/user-attachments/assets/4e1bf716-90b1-424a-809b-5d343d70c168" width="200" alt="Sleep Track"/>  
+
+
+
+
 
 
 ## Tech Stack
